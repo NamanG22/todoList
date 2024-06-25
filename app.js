@@ -11,23 +11,6 @@ app.set('view engine','ejs');
 
 mongoose.connect("mongodb+srv://gargnaman352:NamaNiscool1!@cluster0.wydypqz.mongodb.net/todoList");
 
-
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDatD4O1SXZ8pCmN6U0x4AaZ-HHXIIr2PQ",
-  authDomain: "todolist-1f091.firebaseapp.com",
-  projectId: "todolist-1f091",
-  storageBucket: "todolist-1f091.appspot.com",
-  messagingSenderId: "335223838844",
-  appId: "1:335223838844:web:1605d18efe924f962a11f9",
-  measurementId: "G-JTR8FHW43Y"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
 const tasksSchema = new mongoose.Schema({
   name:String
 });
