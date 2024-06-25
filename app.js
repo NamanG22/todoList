@@ -24,13 +24,13 @@ const Task = mongoose.model("Task",tasksSchema)
 const List = mongoose.model("List",listSchema)
 
 const task1 = new Task({
-  name:"LeetCode Daily"
+  name: "Welcome to your todolist!"
 })
 const task2 = new Task({
-  name:"CSSBattle Daily"
+  name: "Hit the + button to add a new item."
 })
 const task3 = new Task({
-  name:"WebD by Angela Yu"
+  name: "<-- Hit this to delete an item."
 })
 
 const task = new Task({
@@ -53,35 +53,40 @@ app.get("/",function(req,res){
   findTasks();
 })
 
+app.get("/about", function(req, res){
+  res.render("about");
+});
+
 app.get('/favicon.ico', (req,res)=>{
   return;
 })
 
 app.get("/:newPage",function(req,res){
-  const pageName = req.params.newPage;
-  const sPageName = pageName.toLowerCase();
-  async function findTasks() {
-    const listItems = await List.findOne({name:sPageName});
-    if(!listItems){
-      console.log("doesn't exist");
-      const list = new List({
-        name:sPageName,
-        tasks:dailyTasks
-      })
-      List.insertMany(list);
-      res.redirect("/"+pageName);
-    }
-    else{
-      res.render('list',{listType: _.capitalize(listItems.name),items: listItems.tasks});
-    }
+  // const pageName =req.params.newPage;
+  const pageName =_.capitalize(req.params.newPage);
+  // if(req.params.newPage === pageName){
+
+    async function findTasks() {
+      const listItems = await List.findOne({name:pageName});
+      if(!listItems){
+        console.log("doesn't exist");
+        const list = new List({
+          name:pageName,
+          tasks:dailyTasks
+        });
+        list.save();
+        const listItemsAgain = await List.findOne({name:pageName});
+        res.render('list',{listType:pageName,items: listItems.tasks});
+        // res.redirect("/"+pageName);
+      }
+      else{
+        res.render('list',{listType:listItems.name,items: listItems.tasks});
+      }
   }
   findTasks();
 })
 
 
-app.get("/about", function(req, res){
-  res.render("about");
-});
 
 app.post("/",function(req,res)  {
 
@@ -105,13 +110,12 @@ app.post("/",function(req,res)  {
       if(item){
         async function findTaskList() {
           const newInsertedTask = await List.findOne({name:itemList});
-          console.log(newInsertedTask.tasks);
           newInsertedTask.tasks.push(newTask);
           newInsertedTask.save();
+          res.redirect("/"+itemList);
         }
         findTaskList();
       }
-      res.redirect("/"+itemList);
   }
 });
 app.post("/done",function(req,res)  {
